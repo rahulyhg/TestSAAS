@@ -1,0 +1,112 @@
+<title>Consulta Magento TEST</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+<style>
+body,h1 {font-family: "Montserrat", sans-serif}
+img {margin-bottom: -7px}
+.w3-row-padding img {margin-bottom: 12px}
+table, th, td {
+  border: 1px solid black;
+}
+</style>
+<body>
+
+
+<!-- !PAGE CONTENT! -->
+<div class="w3-content" style="max-width:1500px">
+
+<!-- Header -->
+<div class="w3-opacity">
+<div class="w3-clear"></div>
+<header class="w3-center w3-margin-bottom">
+  <h1><b>Consulta de ordenes Magento Beauty Angels Store</b></h1>
+  <p><b id="url">GET http://beautyangelsstore.mx/rest/V1/orders?searchCriteria=?</b></p>
+
+ <!--  Status: <input type="text" id ="date" name="date"> (De dejar en blanco traera todos los registros) -->
+
+  <p class="w3-padding-16"><button class="w3-button w3-black" onclick="myFunction()">Consulta TEST</button></p>
+</header>
+</div>
+
+<div>
+    <p id="content"></p>
+</div>
+
+<!-- End Page Content -->
+</div>
+
+
+<script>
+// Toggle grid padding
+async function myFunction() {
+
+    let stringTable = "<table><tr><th>Id orden</th><th>N° Orden</th><th>Nombre</th><th>Apellido</th><th>Email</th><th>created_at</th>><th>Cant. articulos</th><th>subtotal</th><th>Status</th></tr>"
+    /* let dateFilter = document.getElementById("date").value; */
+    let urlStore = "http://beautyangelsstore.mx/";
+    let urlService ="rest/V1/orders";
+    let params = { searchCriteria : '?', 'searchCriteria[filterGroups][0][filters][0][field]' : 'status' , 'searchCriteria[filterGroups][0][filters][0][value]' : 'processing' , 'searchCriteria[filterGroups][0][filters][0][condition_type]' : 'eq' };
+    let formatUrl = new URL(urlStore + urlService);
+    
+    Object.keys( params ).forEach( param => formatUrl.searchParams.append( param, params[ param ] ));
+
+    document.getElementById("url").innerHTML = formatUrl;
+    
+    let token = await getAuthToken();
+
+    let authHeaders = new Headers();
+    authHeaders.append('Authorization','Bearer '+token);
+    authHeaders.append('Content-Type','application/json');
+
+    let options = { method : 'GET', headers : authHeaders }
+
+    fetch( formatUrl, options).then(
+        response => response.json().then(
+            responseJson => {
+                console.log(responseJson);
+                document.getElementById("content").innerHTML = formatTable(responseJson.items, stringTable);
+            }
+        ).catch(
+            error => document.getElementById("content").innerHTML = JSON.stringify(error)
+        )
+    )
+
+    /* let wsResponse = await fetch('http://54.202.124.81/rest/V1/orders?searchCriteria=?', options);
+    let jsonResponse = await wsResponse.json();
+    console.log(jsonResponse); */
+
+}
+
+async function getAuthToken(){
+
+    let urlStore = "http://beautyangelsstore.mx/";
+    let urlService ="rest/V1/integration/admin/token";
+
+    let authHeaders = new Headers();
+    authHeaders.append('Content-Type','application/json');
+
+    let data = { username : "lmarquez", password : "Ferelli01!" };
+    let options = { method : 'POST', body : JSON.stringify(data), headers: authHeaders };
+
+    let authServiceResponse = await fetch( urlStore + urlService, options);
+    let jsonResponse = await authServiceResponse.json();
+    return jsonResponse;
+}
+
+
+function formatTable(responseItems, initialString){
+    responseItems.forEach(function(item){
+        let fila = "<tr><th>"+item.entity_id+"</th><th>"+item.increment_id+"</th><th>"+item.customer_firstname+"</th><th>"+item.customer_lastname+"</th><th>"+item.customer_email+"</th><th>"+item.created_at+"</th>><th>"+item.total_qty_ordered+"</th><th>"+item.subtotal+"</th><th>"+item.status+"</th></tr>";
+        initialString  = initialString + fila;
+        console.log(item)
+    });
+    initialString  = initialString + "</table>";
+
+    return initialString;
+}
+
+</script>
+
+</body>
+</html>

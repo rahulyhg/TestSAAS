@@ -1,0 +1,68 @@
+<?php
+
+namespace Ferelli\ERP;
+
+class Magento {
+
+    private $urlStore = "http://beautyangelsstore.mx/";
+    private $timeout = 30;
+
+    public function getToken($user, $password){
+        $service = "rest/V1/integration/admin/token/";
+        $method = "POST";
+        $tokenData = array(
+            'username' => $user,
+            'password' => $password);
+        $headers = array(
+            "Content-Type : application/json");
+
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => $this->urlStore.$service,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT => $this->timeout,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_POSTFIELDS => $tokenData,
+            CURLOPT_CUSTOMREQUEST => $method,
+            CURLOPT_HTTPHEADER => $headers));
+    
+        $response = curl_exec($curl);
+        $jsonResponse = json_decode($response,true); //Convierte el response a un array o de no serlo, a un String
+
+        if( is_array($jsonResponse) ) throw new Exception($jsonResponse['message']);
+        else return $jsonResponse;
+
+        /* return is_array($jsonResponse) ? throw new Exception($jsonResponse['message']) : $jsonResponse; */
+    }
+
+    public function getOrders($token){
+        $service = "rest/V1/orders?";
+        $method = "GET";
+        $headers = array(
+            "Content-Type : application/json",
+            "Authorization: Bearer ".$token);
+        $queryData = array(
+            'searchCriteria[filterGroups][0][filters][0][field]' => 'status',
+            'searchCriteria[filterGroups][0][filters][0][value]' => 'processing',
+            'searchCriteria[filterGroups][0][filters][0][condition_type]' => 'eq');
+        $httpQuery = http_build_query($queryData);
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => $this->urlStore.$service.$httpQuery,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT => $this->timeout,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => $method,
+            CURLOPT_HTTPHEADER => $headers));
+
+        $response = curl_exec($curl);
+        $jsonResponse = json_decode($response,true); //Convierte el response a un array o de no serlo, a un String
+
+        if(key_exists('message',$jsonResponse)) throw new Exception($jsonResponse['message']);
+        else return $jsonResponse;
+
+    }
+
+}
+
+?>
