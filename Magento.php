@@ -35,7 +35,7 @@ class Magento {
         /* return is_array($jsonResponse) ? throw new Exception($jsonResponse['message']) : $jsonResponse; */
     }
 
-    public function getOrders($token){
+    public function getOrders($token, $lastDate){
         $service = "rest/V1/orders?";
         $method = "GET";
         $headers = array(
@@ -44,7 +44,10 @@ class Magento {
         $queryData = array(
             'searchCriteria[filterGroups][0][filters][0][field]' => 'status',
             'searchCriteria[filterGroups][0][filters][0][value]' => 'processing',
-            'searchCriteria[filterGroups][0][filters][0][condition_type]' => 'eq');
+            'searchCriteria[filterGroups][0][filters][0][condition_type]' => 'eq',
+            'searchCriteria[filterGroups][1][filters][0][field]' => 'updated_at',
+            'searchCriteria[filterGroups][1][filters][0][value]' => $lastDate,
+            'searchCriteria[filterGroups][1][filters][0][condition_type]' => 'gteq');
         $httpQuery = http_build_query($queryData);
         $curl = curl_init();
         curl_setopt_array($curl, array(

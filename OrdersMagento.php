@@ -10,49 +10,40 @@ $magento = new Magento();
 $databaseConnection = new DataBaseConnection();
 
 try{
+    $running = $databaseConnection->initProccess();
+    $configuration = $databaseConnection->getConfigurationData();
 
-    $token =  $magento -> getToken('lmarquez','Ferelli01!');
-    $orders = $magento -> getOrders($token);
+    if( !$running ) throw new Exception('Ya existe un proceso corriendo');
+
+    if( !isset($configuration) )  throw new Exception('No se encontro la configuracion para iniciar');
+    if( !is_array($configuration) ) throw new Exception('No se recibio una configuracion valida');
+    
+    $username = key_exists('username',$configuration) ? $configuration['username'] : NULL;
+    $password = key_exists('password',$configuration) ? $configuration['password'] : NULL;
+    $lastRun  = key_exists('last_run',$configuration) ? $configuration['last_run'] : NULL;
+
+    if( !isset($username) ) throw new Exception('No se especifico un username');
+    if( !isset($password) ) throw new Exception('No se especifico un password');
+    if( !isset($lastRun) ) throw new Exception('Ultima fecha no es valida');
+
+    $token =  $magento -> getToken($username, $password);
+    $orders = $magento -> getOrders($token, $lastRun);
 
     var_dump($orders);
 
+    if( !isset($orders) ) throw new Exception('No se recibio respuesta de la tienda');
+    if( !is_array($orders) ) throw new Exception('No se recibio una respuesta valida');
+    if( !key_exists('items',$orders) ) throw new Exception('No se regresaron items');
+
+    foreach( $orders['items'] as $item){
+        try{
+            if( !isset($item['customer_firstname'])) throw new Exception('No se pudo acceder al nombre del cliente');
+            if( !key_exists('customer_lastname',$item)) echo "No hay apellido";
+        }catch(Exception $e){ echo $e->getMessage();}
+    }
+
+
 }catch(Exception $e){ echo $e->getMessage(); }
 
-
-
-
-
-
-/* $url = "http://beautyangelsstore.mx/rest/V1/orders?".http_build_query($queryData); */
-/* 
-
-    $jsonArray = json_decode($response);
-    //var_dump($jsonArray);
-    $items = $jsonArray->items;
-    if(sizeof($items) == 0){
-        echo "No hay elementos";
-    }
-    foreach($items as $item){
-       /*  echo "entre al for";
-        var_dump($item); 
-        echo $item->base_currency_code;
-        echo "<br>";
-        echo $item->base_grand_total;
-        echo "<br>";
-        echo $item->base_subtotal;
-        echo "<br>";
-        echo $item->customer_email;
-        echo "<br>";
-        echo $item->status;
-        echo "<br>";
-        echo $item->customer_firstname;
-        echo "<br>";
-        echo $item->customer_lastname;
-        echo "<br>";
-
-        echo "<br><br><br>";
-    }
-    echo "Fin del else";
- */
 
 

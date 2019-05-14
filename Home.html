@@ -47,7 +47,7 @@ async function myFunction() {
     let urlStore = "http://beautyangelsstore.mx/";
     let urlService ="rest/V1/orders";
     let params = { searchCriteria : '?', 'searchCriteria[filterGroups][0][filters][0][field]' : 'status' , 'searchCriteria[filterGroups][0][filters][0][value]' : 'processing' , 'searchCriteria[filterGroups][0][filters][0][condition_type]' : 'eq' };
-    let formatUrl = new URL(urlStore + urlService);
+    let formatUrl = new URL(urlStore . urlService);
     
     Object.keys( params ).forEach( param => formatUrl.searchParams.append( param, params[ param ] ));
 
@@ -56,7 +56,7 @@ async function myFunction() {
     let token = await getAuthToken();
 
     let authHeaders = new Headers();
-    authHeaders.append('Authorization','Bearer '+token);
+    authHeaders.append('Authorization','Bearer '.token);
     authHeaders.append('Content-Type','application/json');
 
     let options = { method : 'GET', headers : authHeaders }
@@ -89,7 +89,7 @@ async function getAuthToken(){
     let data = { username : "lmarquez", password : "Ferelli01!" };
     let options = { method : 'POST', body : JSON.stringify(data), headers: authHeaders };
 
-    let authServiceResponse = await fetch( urlStore + urlService, options);
+    let authServiceResponse = await fetch( urlStore . urlService, options);
     let jsonResponse = await authServiceResponse.json();
     return jsonResponse;
 }
@@ -97,11 +97,11 @@ async function getAuthToken(){
 
 function formatTable(responseItems, initialString){
     responseItems.forEach(function(item){
-        let fila = "<tr><th>"+item.entity_id+"</th><th>"+item.increment_id+"</th><th>"+item.customer_firstname+"</th><th>"+item.customer_lastname+"</th><th>"+item.customer_email+"</th><th>"+item.created_at+"</th>><th>"+item.total_qty_ordered+"</th><th>"+item.subtotal+"</th><th>"+item.status+"</th></tr>";
-        initialString  = initialString + fila;
+        let fila = "<tr><th>".item.entity_id."</th><th>".item.increment_id."</th><th>".item.customer_firstname."</th><th>".item.customer_lastname."</th><th>".item.customer_email."</th><th>".item.created_at."</th>><th>".item.total_qty_ordered."</th><th>".item.subtotal."</th><th>".item.status."</th></tr>";
+        initialString  = initialString . fila;
         console.log(item)
     });
-    initialString  = initialString + "</table>";
+    initialString  = initialString . "</table>";
 
     return initialString;
 }

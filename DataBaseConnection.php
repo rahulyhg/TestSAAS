@@ -6,7 +6,8 @@ class DataBaseConnection {
     
     private $server = "127.0.0.1";
     private $username = "root";
-    private $password = "i-037fa87410e75e2e1"; //52.89.143.217 PRODUCCION
+    private $password = ""; //Localhost
+    //private $password = "i-037fa87410e75e2e1"; //52.89.143.217 PRODUCCION
     //private $password = "i-0b7e8b7789aad56fa"; //54.202.124.81  PRE - PRODUCCION (DEV)
     private $databaseName;
     private $tableName = "ferelli_replica";
@@ -28,14 +29,28 @@ class DataBaseConnection {
         $this->selectDBtoWork("magento");
     }
 
-    public function getConfigurationData($referenceCode){
+    public function getConfigurationData(){
         $resultado = null;
+
         $this->init();
         $query = 'SELECT * FROM '.$this->tableName;
         $resultado = mysqli_query($this->connection , $query ) or die(mysqli_error($this->connection));
         mysqli_close($this->connection);
+
         $arrayResult = mysqli_fetch_array($resultado);
+
         return $arrayResult;
+    }
+
+    public function initProccess(){
+        $resultado = null;
+
+        $this->init();
+        $query = 'UPDATE '.$this->tableName.' SET running = 1 WHERE running = 0';
+        $resultado = mysqli_query($this->connection , $query ) or die(mysqli_error($this->connection));
+        $rowsAffected = mysqli_affected_rows($this->connection);
+        mysqli_close($this->connection);
+        return $rowsAffected;
     }
 }
 
