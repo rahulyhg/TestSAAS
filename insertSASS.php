@@ -8,7 +8,7 @@ $sassPassword = "12345";
 //Conexion
 $urlWS = "http://csaldivar.saasmexico.net/modules/api/";
 $endpoint = "customers/";
-$method = "PUT";
+$method = "POST";
 $idUser = "1271";
 
 //Headers
@@ -20,7 +20,7 @@ $headers = array(
 //Data
 $postData = array(
     'custname' => 'Eliezer Test 10',
-    'cust_ref' => 'eliezer.garza@ferelli.com.mx',
+    'cust_ref' => 'eliezer.garza@ferelli.com.mx.net',
     'address' => 'Sierra de Mérida #8008',
     'tax_id' => 'GAME750911QP3',
     'curr_code' => 'MXN',
@@ -42,7 +42,7 @@ $postData = array(
 $curl = curl_init();
 
 curl_setopt_array($curl, array(
-    CURLOPT_URL => $urlWS.$endpoint.$idUser,
+    CURLOPT_URL => $urlWS.$endpoint,
     CURLOPT_RETURNTRANSFER => true,
     CURLOPT_TIMEOUT => 30,
     CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
@@ -62,6 +62,16 @@ if ($err) {
 } else {
   /* echo $response;*/
   $jsonArray2 = json_decode($response,true); 
+  var_dump($jsonArray2);
+
+  echo "<br><br>NUMERO DE USER NUEVO : ";
+  echo ($jsonArray2['debtor_no']);
+  echo "FIN<br><br>";
+
+  echo "<br><br>ERROR MSG : ";
+  echo ($jsonArray2['msg']);
+  echo "<br>FIN<br><br>";
+
   if($jsonArray2['success'] == 1){
     echo $jsonArray2['msg'];
   }else{

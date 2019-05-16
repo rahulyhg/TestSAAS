@@ -11,7 +11,8 @@ class DataBaseConnection {
     //private $password = "i-0b7e8b7789aad56fa"; //54.202.124.81  PRE - PRODUCCION (DEV)
     private $databaseName;
     private $tableName = "ferelli_replica";
-    private $clientsTable = "clientes_sass";
+    private $ordersTable = "ferelli_ordenes";
+    private $clientsTable = "ferelli_clientes";
     private $connection; 
     private $db;
 
@@ -50,8 +51,57 @@ class DataBaseConnection {
         $resultado = mysqli_query($this->connection , $query ) or die(mysqli_error($this->connection));
         $rowsAffected = mysqli_affected_rows($this->connection);
         mysqli_close($this->connection);
+
         return $rowsAffected;
     }
+
+    public function checkOrder($entityIdMagento){
+        $resultado = null;
+
+        $this->init();
+        $query = 'SELECT * FROM '.$this->ordersTable.' WHERE id_entity_magento='.$entityIdMagento.'';
+        $resultado = mysqli_query($this->connection , $query ) or die(mysqli_error($this->connection));
+        mysqli_close($this->connection);
+
+        $arrayResult = mysqli_fetch_array($resultado);
+
+        return $arrayResult;
+    }
+
+    public function checkUser($idUserMagento){
+        $resultado = null;
+
+        $this->init();
+        $query = 'SELECT * FROM '.$this->clientsTable.' WHERE id_magento='.$idUserMagento.'';
+        $resultado = mysqli_query($this->connection , $query ) or die(mysqli_error($this->connection));
+        mysqli_close($this->connection);
+
+        $arrayResult = mysqli_fetch_array($resultado);
+
+        return $arrayResult;
+    }
+
+    public function addUser($idUserMagento, $idUserSASS){
+        $this->init();
+
+        $query = 'INSERT INTO '.$this->clientsTable.' ( id_magento, id_sass ) VALUES ('.$idUserMagento.', '.$idUserSASS.')';
+        $resultado = mysqli_query($this->connection , $query ) or die(mysqli_error($this->connection));
+        mysqli_close($this->connection);
+
+    }
+
+    public function finishProccess(){
+        $resultado = null;
+
+        $this->init();
+        $query = 'UPDATE '.$this->tableName.' SET running = 0 WHERE running = 1';
+        $resultado = mysqli_query($this->connection , $query ) or die(mysqli_error($this->connection));
+        $rowsAffected = mysqli_affected_rows($this->connection);
+        mysqli_close($this->connection);
+        
+        return $rowsAffected;
+    }
+
 }
 
 

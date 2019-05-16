@@ -1,6 +1,7 @@
 <?php
 
 namespace Ferelli\ERP;
+use Exception;
 
 class Magento {
 
