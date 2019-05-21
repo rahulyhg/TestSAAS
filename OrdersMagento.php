@@ -1,17 +1,17 @@
 <?php
 
-include_once('Magento.php');
-include_once('DataBaseConnection.php');
-include_once('SASS.php');
+include_once 'Magento.php';
+include_once 'DataBaseConnection.php';
+include_once 'SASS.php';
 
 use Ferelli\ERP\Magento as Magento;
 use Ferelli\ERP\DataBaseConnection as DataBaseConnection;
-use Ferelli\ERP\SASS as SASS;
+use Ferelli\ERP\SAAS as SAAS;
 
 
 $magento = new Magento();
 $databaseConnection = new DataBaseConnection();
-$sass = new SASS();
+$saas = new SAAS();
 
 try{
     $running = $databaseConnection -> initProccess(); //Cambia el flag running en la DB de 0 a 1, regresa la cantidad de filas afectadas. 
@@ -37,29 +37,39 @@ try{
     if( !is_array($orders) ) throw new Exception('No se recibio una respuesta valida');
     if( !key_exists('items',$orders) ) throw new Exception('No se regresaron items');
 
-    foreach( $orders['items'] as $item){
+    foreach( $orders['items'] as $item ){
         try{
-
-            if( !isset($item['entity_id']) ) throw new Exception('La orden no tiene un ID');
+            /* if( !isset($item['entity_id']) ) throw new Exception('La orden no tiene un ID'); */
             $order = $databaseConnection -> checkOrder($item['entity_id']);
 
-            if( !isset($order) ) {
-                echo "REGISTRAR ORDEN<br>";
+            if( !isset($order) ) { /*Registrar Orden*/
 
                 $userMagentoId = $item['customer_id'];
-                $userSASS = $databaseConnection -> checkUser($userMagentoId);
+                $userSAAS = $databaseConnection -> checkUser($userMagentoId);
+                $idUserSAAS = isset($userSAAS['id_saas']) ? $userSAAS['id_saas'] : NULL;
+                $idUserBranchSAAS = isset($userSAAS['id_branch_saas']) ? $userSAAS['id_branch_saas'] : NULL;
 
-                if( !isset($userSASS) ) {
+                if( !isset($idUserSAAS) ) { /*Registrar Usuario*/
 
-                    $sassUserId = $sass -> addCustomer($item);
-                    if( !isset($sassUserId) ) throw new Exception('No se pudo registrar al usuario con ID '.$userMagentoId);
-                    $successRegister = $databaseConnection->addUser($userMagentoId, $sassUserId);
+                    $responseUserSAAS = $saas -> addCustomer($item);
+                    if( !isset($responseUserSAAS) ) throw new Exception("El usuario con ID ".$userMagentoId." no pudo ser registrado, Orden ".$item['increment_id']);
+                    $databaseConnection->addUser($userMagentoId, $responseUserSAAS);
+                    $idUserSAAS = $responseUserSAAS;
 
-                    $userSASS = $sassUserId;
+                }
 
-                }else{ $userSASS = $userSASS['id_sass']; }
-                
-                //Aqui se debe registrar ya la orden
+                if( !isset($idUserBranchSAAS) ){ /*Registra el branch del usuario en la Base de datos*/
+                    
+                    $responseBranchSAAS = $saas -> getBranch($idUserSAAS, $item['increment_id']);
+                    if( !isset($responseBranchSAAS) ) throw new Exception("El usuario con ID ".$userMagentoId." no tiene un branch en SAAS, Orden ".$item['increment_id']);
+                    $databaseConnection -> addBranch($userMagentoId, $responseBranchSAAS);
+                    $idUserBranchSAAS = $responseBranchSAAS;
+                    
+                }
+
+                $orderIdSAAS = $saas -> addSale($item, $idUserSAAS, $idUserBranchSAAS);
+                if( !isset($orderIdSAAS) ) throw new Exception('No se pudo registrar la orden '.$item['increment_id'].' ante el SAAS');
+                $databaseConnection -> addOrder($item['entity_id'],$item['increment_id'], $orderIdSAAS)
 
             }else{
                echo "La orden ".$item['entity_id']." ya esta registrada"; 

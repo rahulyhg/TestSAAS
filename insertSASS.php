@@ -7,7 +7,7 @@ $sassPassword = "12345";
 
 //Conexion
 $urlWS = "http://csaldivar.saasmexico.net/modules/api/";
-$endpoint = "customers/";
+$endpoint = "sales/";
 $method = "POST";
 $idUser = "1271";
 
@@ -19,25 +19,34 @@ $headers = array(
 
 //Data
 $postData = array(
-    'custname' => 'Eliezer Test 10',
-    'cust_ref' => 'eliezer.garza@ferelli.com.mx.net',
-    'address' => 'Sierra de Mérida #8008',
-    'tax_id' => 'GAME750911QP3',
-    'curr_code' => 'MXN',
-    'credit_status' => '1',
-    'payment_terms' => '4',
-    'discount' => '0',
-    'pymt_discount' => '0',
-    'credit_limit' => '10000',
-    'sales_type' => '1',
-    'cfdi_street' => 'Sierra de Mérida',
-    'cfdi_street_number' => '8008',
-    'cfdi_district' => 'Sierra ',
-    'cfdi_postal_code' => '67190',
-    'cfdi_city' => 'Guadalupe',
-    'cfdi_state' => 'Nuevo Leon',
-    'cfdi_country' => 'México',
-    'client_no' => '1271');
+  'trans_type' => '30',
+  'ref' => 'auto',
+  'comments' => 'Esta es un nuevo registro test',
+  'order_date' => '2019-05-16',
+  'delivery_date' => '2019-05-16',
+  'cust_ref' => 'TEST',
+  'deliver_to' => 'Eliezer',
+  'deliver_address' => 'Test',
+  'phone' => '8110111256',
+  'ship_via' => '1',
+  'location' => 'DEF',
+  'freight_cost' => '0',
+  'email' => 'eliezer.garza@ferelli.com.mx',
+  'customer_id' => '1271',
+  'branch_id' => '1188',
+  'sales_type' => '1',
+  'dimension_id' => 0,
+  'dimension2_id' => 0,
+  'payment' => '4',
+  'items' => array(
+    array(
+      'stock_id' => '005',
+      'qty' => '1',
+      'price' => 10,
+      'discount' => 0,
+      'description'=>'TEST')
+      )
+  );
 
 $curl = curl_init();
 
@@ -57,10 +66,16 @@ $err = curl_error($curl);
 
 curl_close($curl);
 
+var_dump($response);
+
+$jsonArray2 = json_decode($response); //Regresa un null de ser un string
+var_dump($jsonArray2);
+
+/* 
 if ($err) {
   echo "cURL Error #:" . $err;
 } else {
-  /* echo $response;*/
+
   $jsonArray2 = json_decode($response,true); 
   var_dump($jsonArray2);
 
@@ -74,8 +89,10 @@ if ($err) {
 
   if($jsonArray2['success'] == 1){
     echo $jsonArray2['msg'];
+    print_r($jsonArray2);
   }else{
     echo $response;
-  }
+  } 
+
  
-}
+}*/

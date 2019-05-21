@@ -81,10 +81,27 @@ class DataBaseConnection {
         return $arrayResult;
     }
 
-    public function addUser($idUserMagento, $idUserSASS){
+    public function addUser($idUserMagento, $idUserSAAS){
         $this->init();
 
-        $query = 'INSERT INTO '.$this->clientsTable.' ( id_magento, id_sass ) VALUES ('.$idUserMagento.', '.$idUserSASS.')';
+        $query = 'INSERT INTO '.$this->clientsTable.' ( id_magento, id_saas ) VALUES ('.$idUserMagento.', '.$idUserSAAS.')';
+        $resultado = mysqli_query($this->connection , $query ) or die(mysqli_error($this->connection));
+        mysqli_close($this->connection);
+
+    }
+
+    public function addBranch($idUserMagento, $idBranchSAAS){
+        $this->init();
+
+        $query = 'UPDATE '.$this->clientsTable.' SET id_branch_saas = '.$idBranchSAAS.' WHERE id_magento = '.$idUserMagento;
+        $resultado = mysqli_query($this->connection , $query ) or die(mysqli_error($this->connection));
+        mysqli_close($this->connection);
+    }
+
+    public function addOrder($idOrderMagento, $incrementalMagentoId, $idOrderSAAS){
+        $this->init();
+
+        $query = 'INSERT INTO '.$this->ordersTable.' ( id_entity_magento, id_orden_magento, id_orden_saas ) VALUES ('.$idOrderMagento.', '.$incrementalMagentoId.', '.$idOrderSAAS.')';
         $resultado = mysqli_query($this->connection , $query ) or die(mysqli_error($this->connection));
         mysqli_close($this->connection);
 
