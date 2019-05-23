@@ -69,6 +69,7 @@ curl_close($curl);
 var_dump($response);
 
 $jsonArray2 = json_decode($response); //Regresa un null de ser un string
+
 var_dump($jsonArray2);
 
 /* 

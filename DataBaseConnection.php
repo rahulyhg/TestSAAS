@@ -90,6 +90,15 @@ class DataBaseConnection {
 
     }
 
+    public function addNewRun($newDate){
+        $this->init();
+
+        $query = "UPDATE ".$this->tableName." SET last_run ='".$newDate."'";
+        $resultado = mysqli_query($this->connection , $query ) or die(mysqli_error($this->connection));
+        mysqli_close($this->connection);
+
+    }
+
     public function addBranch($idUserMagento, $idBranchSAAS){
         $this->init();
 

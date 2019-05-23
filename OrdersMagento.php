@@ -3,21 +3,26 @@
 include_once 'Magento.php';
 include_once 'DataBaseConnection.php';
 include_once 'SASS.php';
+include_once 'Email.php';
 
 use Ferelli\ERP\Magento as Magento;
 use Ferelli\ERP\DataBaseConnection as DataBaseConnection;
 use Ferelli\ERP\SAAS as SAAS;
-
+use Ferelli\ERP\Email as Email;
 
 $magento = new Magento();
 $databaseConnection = new DataBaseConnection();
 $saas = new SAAS();
+$email = new Email();
+
+$newRun; //Variable que tendra la fecha de la ultima orden.
+$errors; //Variable que almacenara los errores de cada orden
 
 try{
     $running = $databaseConnection -> initProccess(); //Cambia el flag running en la DB de 0 a 1, regresa la cantidad de filas afectadas. 
     $configuration = $databaseConnection -> getConfigurationData(); //Hace un select a los datos de la DB (username, password, last run)
 
-   /*  if( !$running ) throw new ErrorException('Ya existe un proceso corriendo'); */
+    if( !$running ) throw new ErrorException('Ya existe un proceso corriendo');
 
     if( !isset($configuration) )  throw new Exception('No se encontro la configuracion para iniciar');
     if( !is_array($configuration) ) throw new Exception('No se recibio una configuracion valida');
@@ -37,9 +42,11 @@ try{
     if( !is_array($orders) ) throw new Exception('No se recibio una respuesta valida');
     if( !key_exists('items',$orders) ) throw new Exception('No se regresaron items');
 
+    $newRun = $lastRun; //La nueva fecha de corrida del script se inicializa con la actual.
+
     foreach( $orders['items'] as $item ){
         try{
-            /* if( !isset($item['entity_id']) ) throw new Exception('La orden no tiene un ID'); */
+
             $order = $databaseConnection -> checkOrder($item['entity_id']);
 
             if( !isset($order) ) { /*Registrar Orden*/
@@ -67,19 +74,33 @@ try{
                     
                 }
 
+                /*Registra la orden en la DB */ 
                 $orderIdSAAS = $saas -> addSale($item, $idUserSAAS, $idUserBranchSAAS);
                 if( !isset($orderIdSAAS) ) throw new Exception('No se pudo registrar la orden '.$item['increment_id'].' ante el SAAS');
-                $databaseConnection -> addOrder($item['entity_id'],$item['increment_id'], $orderIdSAAS)
+                $databaseConnection -> addOrder($item['entity_id'],$item['increment_id'], $orderIdSAAS);
 
-            }else{
-               echo "La orden ".$item['entity_id']." ya esta registrada"; 
+                if( isset($item['updated_at']) ){ //Se inicia el proceso de actualiza la fecha de corrida del script
+
+                    $timeRun = strtotime($newRun);
+                    $timeOrder = strtotime($item['updated_at']);
+                    $newRun = $timeOrder > $timeRun ? date_format( date_create($item['updated_at']) , 'Y-m-d' ) : $newRun;
+
+                }
+                 
             }
 
-            echo '<br><br><br>';
-            
-        }catch(Exception $e){ echo "EXCEPTION : "; echo $e->getMessage(); echo " [Enviar correo] <br><br>"; }
+        }catch(Exception $e){ 
+            $errors = isset($errors) ? $errors : ""; 
+            $errors = $errors.$e->getMessage()."\n \n";
+        }
+
     }
 
+    $databaseConnection -> addNewRun($newRun);
+    $databaseConnection->finishProccess(); //Termina el proceso de ejecucion
+
+    $errors = isset($errors) ? $errors : NULL;
+    $email -> sendEmail($errors); //Envia un email con el resultado del script
 
 }catch(ErrorException $e){ echo $e->getMessage(); }
 catch(Exception $e){ echo $e->getMessage(); $databaseConnection->finishProccess(); }
