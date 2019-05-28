@@ -3,9 +3,9 @@
 
 namespace Ferelli\ERP;
 
-include_once 'src\PHPMailer.php';
-include_once 'src\Exception.php';
-include_once 'src\SMTP.php';
+include_once 'src/PHPMailer.php';
+include_once 'src/Exception.php';
+include_once 'src/SMTP.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
