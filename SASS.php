@@ -147,7 +147,7 @@ class SAAS {
                 'stock_id' => $item['sku'],
                 'qty' => $item['qty_ordered'],
                 'price' => $item['price'],
-                'discount' => $item['discount_amount'],
+                'discount' => $item['discount_amount']/100,
                 'description'=> $item['name'] );
 
             array_push($items,$itemArray);

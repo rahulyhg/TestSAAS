@@ -19,7 +19,7 @@ class Email {
         $this->email->IsSMTP(); //Indica que se incluira una configuracion de credenciales
         $this->email->Host = "smtp.office365.com";
         $this->email->Username = 'developer@beautyangelsacademy.com';
-        $this->email->Password = 'holbox2018!';
+        $this->email->Password = 'Bonds789!';
         $this->email->SMTPAuth = true;
     }
 

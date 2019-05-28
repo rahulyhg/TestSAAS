@@ -6,6 +6,7 @@ use Exception;
 class Magento {
 
     private $urlStore = "http://beautyangelsstore.mx/";
+    //private $urlStore = "http://54.202.124.81/";
     private $timeout = 30;
 
     public function getToken($user, $password){

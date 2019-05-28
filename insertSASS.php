@@ -43,7 +43,7 @@ $postData = array(
       'stock_id' => '005',
       'qty' => '1',
       'price' => 10,
-      'discount' => 0,
+      'discount' => 0.15,
       'description'=>'TEST')
       )
   );

@@ -6,8 +6,8 @@ class DataBaseConnection {
     
     private $server = "127.0.0.1";
     private $username = "root";
-    private $password = ""; //Localhost
-    //private $password = "i-037fa87410e75e2e1"; //52.89.143.217 PRODUCCION
+    //private $password = ""; //Localhost
+    private $password = "i-037fa87410e75e2e1"; //52.89.143.217 PRODUCCION
     //private $password = "i-0b7e8b7789aad56fa"; //54.202.124.81  PRE - PRODUCCION (DEV)
     private $databaseName;
     private $tableName = "ferelli_replica";
