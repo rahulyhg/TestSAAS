@@ -27,7 +27,8 @@ class Email {
 
         try{
             $this->email->setFrom('developer@beautyangelsacademy.com', 'Desarrollo');
-            $this->email->addAddress('masterbypacman@gmail.com', 'Luis Marquez');
+            $this->email->addAddress('administracion@beautyangels.com', 'Administracion Beauty Angels');
+            $this->email->addCC('luis.marquez@ferelli.com.mx');
 
             $this->email->Subject  = 'A terminado la ejecucion del script del SAAS';
             $this->email->Body = isset($message) ? "El script termino de correr, pero se presentaron los siguientes errores: \n \n".$message : "El script termino su ejecucion exitosamente";

@@ -83,7 +83,8 @@ try{
 
                     $timeRun = strtotime($newRun);
                     $timeOrder = strtotime($item['updated_at']);
-                    $newRun = $timeOrder > $timeRun ? date_format( date_create($item['updated_at']) , 'Y-m-d' ) : $newRun;
+                    //$newRun = $timeOrder > $timeRun ? date_format( date_create($item['updated_at']) , 'Y-m-d' ) : $newRun;
+                    $newRun = $timeOrder > $timeRun ? $item['updated_at'] : $newRun;
 
                 }
                  
