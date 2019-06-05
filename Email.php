@@ -17,17 +17,22 @@ class Email {
     function __construct() {
         $this->email = new PHPMailer(TRUE);  //True muestra los exceptions en pantalla
         $this->email->IsSMTP(); //Indica que se incluira una configuracion de credenciales
-        $this->email->Host = "smtp.office365.com";
+        /* $this->email->Host = "smtp.office365.com";
         $this->email->Username = 'developer@beautyangelsacademy.com';
-        $this->email->Password = 'Bonds789!';
+        $this->email->Password = 'Bonds789!'; */
+        $this->email->Host = "smtp.gmail.com";
+        $this->email->Port = 587;
+        $this->email->SMTPSecure = 'tls';
+        $this->email->Username = 'timeisoverxd@gmail.com';
+        $this->email->Password = '8u45kCVe=&eW5CR( >Nb';
         $this->email->SMTPAuth = true;
     }
 
     public function sendEmail($message){
 
         try{
-            $this->email->setFrom('developer@beautyangelsacademy.com', 'Desarrollo');
-            $this->email->addAddress('administracion@beautyangels.com', 'Administracion Beauty Angels');
+            $this->email->setFrom('timeisoverxd@gmail.com', 'Desarrollo Magento - SAAS');
+            $this->email->addAddress('admongral.carrenoavila@gmail.com', 'Administracion Beauty Angels');
             $this->email->addCC('luis.marquez@ferelli.com.mx');
 
             $this->email->Subject  = 'A terminado la ejecucion del script del SAAS';

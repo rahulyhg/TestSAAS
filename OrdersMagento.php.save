@@ -1,3 +1,4 @@
+ls
 <?php
 
 include_once 'Magento.php';
