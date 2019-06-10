@@ -104,7 +104,7 @@ try{
     $email -> sendEmail($errors); //Envia un email con el resultado del script
 
 }catch(ErrorException $e){ echo $e->getMessage(); }
-catch(Exception $e){ echo $e->getMessage(); $databaseConnection->finishProccess(); }
+catch(Exception $e){ echo $e->getMessage(); echo "\n"; $databaseConnection->finishProccess(); }
 
 
 
