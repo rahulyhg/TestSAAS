@@ -111,7 +111,8 @@ class DataBaseConnection {
         $this->init();
 
         $query = 'INSERT INTO '.$this->ordersTable.' ( id_entity_magento, id_orden_magento, id_orden_saas ) VALUES ('.$idOrderMagento.', '.$incrementalMagentoId.', '.$idOrderSAAS.')';
-        $resultado = mysqli_query($this->connection , $query ) or die(mysqli_error($this->connection));
+        $resultado = mysqli_query($this->connection , $query );
+        if(!$resultado){ throw new Exception( "Error insert a ferelli_ordenes : ".mysqli_error($this->connection) ); mysqli_close($this->connection);}
         mysqli_close($this->connection);
 
     }
