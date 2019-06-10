@@ -47,6 +47,9 @@ class Magento {
             'searchCriteria[filterGroups][0][filters][0][field]' => 'status',
             'searchCriteria[filterGroups][0][filters][0][value]' => 'processing',
             'searchCriteria[filterGroups][0][filters][0][condition_type]' => 'eq',
+            'searchCriteria[filterGroups][0][filters][1][field]' => 'status',
+            'searchCriteria[filterGroups][0][filters][1][value]' => 'complete',
+            'searchCriteria[filterGroups][0][filters][1][condition_type]' => 'eq',
             'searchCriteria[filterGroups][1][filters][0][field]' => 'updated_at',
             'searchCriteria[filterGroups][1][filters][0][value]' => $lastDate,
             'searchCriteria[filterGroups][1][filters][0][condition_type]' => 'gteq');
